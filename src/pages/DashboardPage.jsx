@@ -1,8 +1,8 @@
 // src/pages/DashboardPage.jsx
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import AverageCalculator from '../components/AverageCalculator';
-import AttendanceCalculator from '../components/AttendanceCalculator';
+import AverageCalculator from '../components/AverageCalculator'; // Importar
+import AttendanceCalculator from '../components/AttendanceCalculator'; // Importar
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -13,13 +13,16 @@ function DashboardPage() {
   };
 
   return (
-    <div>
-      <h1>¡Bienvenido!</h1>
-      <p>Esta es tu página principal. Aquí irán las calculadoras.</p>
-
-      {/* Aquí añadiremos los componentes de cálculo más adelante */}
-
-      <button onClick={handleLogout}>Cerrar Sesión</button>
+    <div className="dashboard-container">
+      <header>
+        <h1>Panel de Herramientas</h1>
+        <button onClick={handleLogout}>Cerrar Sesión</button>
+      </header>
+      
+      <main>
+        <AverageCalculator />
+        <AttendanceCalculator />
+      </main>
     </div>
   );
 }
