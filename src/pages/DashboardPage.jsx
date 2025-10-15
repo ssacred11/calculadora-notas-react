@@ -1,8 +1,8 @@
 // src/pages/DashboardPage.jsx
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import AverageCalculator from '../components/AverageCalculator'; // Importar
-import AttendanceCalculator from '../components/AttendanceCalculator'; // Importar
+import AverageCalculator from '../components/AverageCalculator';
+import AttendanceCalculator from '../components/AttendanceCalculator';
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function DashboardPage() {
         <h1>Panel de Herramientas</h1>
         <button onClick={handleLogout}>Cerrar Sesión</button>
       </header>
-      
+
       <main>
         <AverageCalculator />
         <AttendanceCalculator />
