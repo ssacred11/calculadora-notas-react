@@ -47,6 +47,11 @@ function AverageCalculator() {
     setResult(`Nota Final: ${finalGrade.toFixed(2)} - Estado: ${status}`);
   };
 
+  const handleClear = () => {
+    setGrades([{ note: '', weight: '' }]);
+    setResult(null);
+  };
+
   return (
     <div className="calculator-container">
       <h3>Calculadora de Promedio Ponderado</h3>
@@ -81,6 +86,9 @@ function AverageCalculator() {
           Añadir Nota
         </button>
         <button type="submit">Calcular Promedio</button>
+        <button type="button" onClick={handleClear} style={{ backgroundColor: '#dc3545' }}>
+          Limpiar
+        </button>
       </form>
       {result && <h4>{result}</h4>}
     </div>

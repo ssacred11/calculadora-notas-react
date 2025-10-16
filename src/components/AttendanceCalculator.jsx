@@ -24,6 +24,12 @@ function AttendanceCalculator() {
     setResult(`Porcentaje de Asistencia: ${attendancePercentage.toFixed(2)}% - Estado: ${status}`);
   };
 
+  const handleClear = () => {
+    setTotalClasses('');
+    setAbsences('');
+    setResult(null);
+  };
+
   return (
     <div className="calculator-container">
       <h3>Calculadora de Asistencia</h3>
@@ -45,6 +51,9 @@ function AttendanceCalculator() {
           />
         </div>
         <button type="submit">Calcular Asistencia</button>
+        <button type="button" onClick={handleClear} style={{ backgroundColor: '#dc3545' }}>
+          Limpiar
+        </button>
       </form>
       {result && <h4>{result}</h4>}
     </div>

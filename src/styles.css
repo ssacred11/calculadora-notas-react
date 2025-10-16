@@ -22,6 +22,8 @@ input {
   padding: 8px;
   border-radius: 4px;
   border: 1px solid #ccc;
+  background-color: #333; /* Fondo un poco más claro para el input */
+  color: #E0E0E0;       /* Texto blanco grisáceo */
 }
 
 button {
