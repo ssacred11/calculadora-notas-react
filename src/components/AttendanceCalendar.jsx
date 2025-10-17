@@ -106,20 +106,18 @@ function AttendanceCalendar() {
     }
   };
 
-  // --- FUNCIÓN DEFINITIVA PARA RESPUESTA 100% INSTANTÁNEA ---
   const handleDayClick = (date) => {
     if (!selectedSubject) return;
 
     const dateString = format(date, 'yyyy-MM-dd');
     const existingRecord = monthlyRecords.find(r => r.date === dateString);
-    const previousRecords = monthlyRecords; // Guardamos el estado anterior para revertir si hay error
+    const previousRecords = monthlyRecords;
 
     let newStatus = 'presente';
     if (existingRecord) {
       newStatus = existingRecord.status === 'presente' ? 'ausente' : null;
     }
 
-    // 1. Actualización Visual Síncrona (esto es lo que la hace instantánea)
     let updatedRecords;
     if (newStatus === null) {
       updatedRecords = monthlyRecords.filter(r => r.date !== dateString);
@@ -130,7 +128,6 @@ function AttendanceCalendar() {
     }
     setMonthlyRecords(updatedRecords);
 
-    // 2. Proceso de Guardado en Segundo Plano (no bloquea la interfaz)
     const syncWithDatabase = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
@@ -146,17 +143,15 @@ function AttendanceCalendar() {
             status: newStatus
           }, { onConflict: 'subject_id, date' });
         }
-        // Actualizamos el resumen total una vez confirmado el cambio
         fetchTotalSummary(selectedSubject.id);
       } catch (error) {
         console.error("Error al guardar en la base de datos:", error);
         alert("No se pudo guardar el cambio. Revisa tu conexión.");
-        // Si hay un error, revertimos al estado anterior
         setMonthlyRecords(previousRecords);
       }
     };
 
-    syncWithDatabase(); // Se ejecuta "a su ritmo" sin esperar a que termine
+    syncWithDatabase();
   };
 
   const tileClassName = ({ date, view }) => {
@@ -174,6 +169,10 @@ function AttendanceCalendar() {
   return (
     <div className="calculator-container attendance-container">
       <h3>Control de Asistencia por Asignatura</h3>
+      <p className="instructions">
+        Crea una asignatura y selecciónala. Luego, haz clic en los días del calendario para cambiar el estado: <strong style={{ color: '#28a745' }}>Presente</strong> → <strong style={{ color: '#dc3545' }}>Ausente</strong> → Limpiar.
+      </p>
+
       <div className="subject-controls">
         <form onSubmit={handleAddSubject}>
           <input type="text" value={newSubjectName} onChange={(e) => setNewSubjectName(e.target.value)} placeholder="Nueva asignatura"/>

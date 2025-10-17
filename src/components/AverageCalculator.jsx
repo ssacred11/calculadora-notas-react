@@ -181,6 +181,9 @@ function AverageCalculator() {
   return (
     <div className="calculator-container average-calculator-container">
       <h3>Calculadora de Promedio Ponderado</h3>
+      <p className="instructions">
+        Ingresa notas como números de dos dígitos (ej: <strong>45</strong> para un 4.5). Si tu ponderación es menor a 100%, calcularemos qué nota necesitas para aprobar. ¡No olvides guardar tus combinaciones!
+      </p>
 
       <div className="saved-grades-controls">
         <select value={selectedCombinationId} onChange={handleLoadCombination}>
