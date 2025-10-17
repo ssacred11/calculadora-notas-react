@@ -46,16 +46,12 @@ function AverageCalculator() {
     }
 
     if (!isValid) {
-      setResult(null);
-      setNeededGrade(null);
-      alert('La combinación cargada tiene campos incompletos.');
-      return;
+      // No mostramos alerta al cargar para no ser molestos, pero sí al calcular manualmente
+      return { finalGrade: 0, totalWeight: 0, isValid: false };
     }
     if (totalWeight > 100) {
-      setResult(null);
-      setNeededGrade(null);
       alert(`La suma de las ponderaciones no puede superar el 100%. Suma actual: ${totalWeight}%.`);
-      return;
+      return { finalGrade, totalWeight, isValid: false };
     }
 
     const roundedGrade = Math.round(finalGrade * 10) / 10;
@@ -74,6 +70,7 @@ function AverageCalculator() {
         setNeededGrade(`Ya has aprobado con las notas actuales.`);
       }
     }
+    return { finalGrade: roundedGrade, totalWeight, isValid: true };
   };
 
   const handleInputChange = (index, event) => {
@@ -97,15 +94,41 @@ function AverageCalculator() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    performCalculation(grades);
+    const { isValid } = performCalculation(grades);
+    if (!isValid) {
+      alert('Todos los campos deben estar completos.');
+    }
   };
 
+  // --- LÓGICA DE GUARDADO RESTAURADA ---
   const handleSaveCombination = async () => {
     if (!combinationName) {
       alert('Por favor, dale un nombre a la combinación antes de guardarla.');
       return;
     }
-    // Lógica para guardar...
+    const { finalGrade, isValid } = performCalculation(grades);
+    if (!isValid) {
+      alert('No puedes guardar una combinación con campos vacíos o inválidos.');
+      return;
+    }
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { error } = await supabase.from('saved_grades').insert({
+        user_id: user.id,
+        combination_name: combinationName,
+        grades_data: grades,
+        final_result: finalGrade
+      });
+
+      if (error) {
+        alert('Error al guardar la combinación: ' + error.message);
+      } else {
+        alert('¡Combinación guardada con éxito!');
+        setCombinationName('');
+        fetchSavedCombinations();
+      }
+    }
   };
 
   const handleLoadCombination = async (event) => {
@@ -130,8 +153,23 @@ function AverageCalculator() {
     }
   };
 
+  // --- LÓGICA DE BORRADO RESTAURADA ---
   const handleDeleteCombination = async () => {
-    // Lógica para borrar...
+    if (!selectedCombinationId) {
+        alert('Por favor, selecciona una combinación para borrar.');
+        return;
+    }
+    const isConfirmed = window.confirm("¿Estás seguro de que quieres borrar esta combinación?");
+    if (isConfirmed) {
+        const { error } = await supabase.from('saved_grades').delete().eq('id', selectedCombinationId);
+        if (error) {
+            alert('Error al borrar la combinación: ' + error.message);
+        } else {
+            alert('Combinación borrada con éxito.');
+            handleClear();
+            fetchSavedCombinations();
+        }
+    }
   };
 
   const handleClear = () => {
