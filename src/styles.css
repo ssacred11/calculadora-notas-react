@@ -68,6 +68,12 @@ button:hover {
     margin-bottom: 30px;
 }
 
+/* --- NUEVO CÓDIGO PARA REDUCIR EL TAMAÑO DEL TÍTULO --- */
+.dashboard-container header h1 {
+    font-size: 1.8em; /* Reduce el tamaño de la fuente */
+    margin: 0;      /* Elimina el margen por defecto */
+}
+
 .input-with-symbol {
   position: relative;
   display: flex;
@@ -93,13 +99,12 @@ input:-webkit-autofill:active {
     box-shadow: 0 0 0 30px #333 inset !important;
 }
 
-/* --- NUEVO CÓDIGO PARA CENTRADO Y PADDING EN MÓVILES --- */
 @media (max-width: 600px) {
   #root {
-    padding: 1rem; /* Reduce el padding en pantallas pequeñas */
+    padding: 1rem;
   }
 
   .form-row {
-    flex-direction: column; /* Pone los inputs uno sobre otro */
+    flex-direction: column;
   }
 }

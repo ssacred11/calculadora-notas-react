@@ -15,7 +15,7 @@ function DashboardPage() {
   return (
     <div className="dashboard-container">
       <header>
-        <h1>Panel de Herramientas</h1>
+        <h1>Mis calculadoras</h1>
         <button onClick={handleLogout}>Cerrar Sesión</button>
       </header>
 
