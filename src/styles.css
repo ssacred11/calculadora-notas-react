@@ -108,3 +108,40 @@ input:-webkit-autofill:active {
     flex-direction: column;
   }
 }
+/* --- NUEVOS ESTILOS PARA LA SECCIÓN DE GUARDADO --- */
+.saved-grades-controls {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.saved-grades-controls select {
+  padding: 8px;
+  background-color: #333;
+  color: #E0E0E0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.delete-button {
+  background-color: #a02c2c !important; /* Rojo oscuro */
+  padding: 8px 12px !important;
+}
+
+.needed-grade-text {
+  color: #64b5f6; /* Un color azul claro para destacar */
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.save-combination {
+  margin-top: 20px;
+  border-top: 1px solid #444;
+  padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
