@@ -4,7 +4,7 @@ import { useState } from 'react';
 function AttendanceCalculator() {
   const [totalClasses, setTotalClasses] = useState('');
   const [absences, setAbsences] = useState('');
-  const [requiredPercentage] = useState(85); // No permitimos que el usuario cambie esto directamente
+  const [requiredPercentage] = useState(85);
   const [result, setResult] = useState(null);
 
   const handleSubmit = (e) => {
@@ -12,7 +12,6 @@ function AttendanceCalculator() {
     const total = parseInt(totalClasses, 10);
     const absent = parseInt(absences, 10);
 
-    // Validaciones mejoradas
     if (isNaN(total) || isNaN(absent) || totalClasses === '' || absences === '') {
       alert('Todos los campos deben estar completos.');
       return;
@@ -31,10 +30,12 @@ function AttendanceCalculator() {
     }
 
     const attendancePercentage = ((total - absent) / total) * 100;
-    const meetsRequirement = attendancePercentage >= requiredPercentage;
+    // --- MODIFICATION: Rounding to one decimal place ---
+    const roundedPercentage = Math.round(attendancePercentage * 10) / 10;
+    const meetsRequirement = roundedPercentage >= requiredPercentage;
     const status = meetsRequirement ? 'Cumple' : 'No Cumple';
 
-    setResult(`Porcentaje de Asistencia: ${attendancePercentage.toFixed(2)}% - Estado: ${status}`);
+    setResult(`Porcentaje de Asistencia: ${roundedPercentage.toFixed(1)}% - Estado: ${status}`);
   };
 
   const handleClear = () => {
@@ -49,16 +50,16 @@ function AttendanceCalculator() {
       <form onSubmit={handleSubmit}>
         <div className="form-row">
           <input
-            type="number" // Mantener como number para el spinner, pero añadir min
-            min="0" // No permitir negativos
+            type="number"
+            min="0"
             placeholder="Total de clases"
             value={totalClasses}
             onChange={(e) => setTotalClasses(e.target.value)}
             required
           />
           <input
-            type="number" // Mantener como number para el spinner, pero añadir min
-            min="0" // No permitir negativos
+            type="number"
+            min="0"
             placeholder="Número de ausencias"
             value={absences}
             onChange={(e) => setAbsences(e.target.value)}

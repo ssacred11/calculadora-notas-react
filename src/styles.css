@@ -35,7 +35,7 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-  color: white; /* <-- ESTA ES LA LÍNEA QUE AÑADIMOS */
+  color: white;
 }
 button:hover {
   border-color: #646cff;
@@ -60,4 +60,22 @@ button:hover {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+}
+
+/* --- NUEVOS ESTILOS para el símbolo '%' --- */
+.input-with-symbol {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-symbol input {
+  padding-right: 25px; /* Añade espacio dentro del input para el símbolo */
+}
+
+.input-with-symbol span {
+  position: absolute;
+  right: 15px; /* Posiciona el símbolo '%' a la derecha */
+  color: #aaa; /* Le da un color un poco más sutil */
+  pointer-events: none; /* Evita que se pueda hacer clic en el símbolo */
 }
