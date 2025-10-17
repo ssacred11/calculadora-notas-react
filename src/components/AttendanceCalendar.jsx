@@ -10,16 +10,13 @@ function AttendanceCalendar() {
   const [newSubjectName, setNewSubjectName] = useState('');
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
-  // Estado para los registros del mes visible en el calendario
   const [monthlyRecords, setMonthlyRecords] = useState([]);
-  // --- NUEVO ESTADO: Para el resumen total de la asignatura ---
   const [totalSummary, setTotalSummary] = useState({ presente: 0, ausente: 0 });
 
   useEffect(() => {
     fetchSubjects();
   }, []);
 
-  // Hook para cargar los registros del mes visible
   useEffect(() => {
     if (selectedSubject) {
       fetchMonthlyRecords(selectedSubject.id, currentDate);
@@ -28,12 +25,10 @@ function AttendanceCalendar() {
     }
   }, [selectedSubject, currentDate]);
 
-  // --- NUEVO HOOK: Carga el resumen total solo cuando cambia la asignatura ---
   useEffect(() => {
     if (selectedSubject) {
       fetchTotalSummary(selectedSubject.id);
     } else {
-      // Resetea el resumen si no hay asignatura seleccionada
       setTotalSummary({ presente: 0, ausente: 0 });
     }
   }, [selectedSubject]);
@@ -47,7 +42,6 @@ function AttendanceCalendar() {
     }
   };
 
-  // Esta función ahora solo alimenta el calendario visual
   const fetchMonthlyRecords = async (subjectId, date) => {
     const start = format(startOfMonth(date), 'yyyy-MM-dd');
     const end = format(endOfMonth(date), 'yyyy-MM-dd');
@@ -63,7 +57,6 @@ function AttendanceCalendar() {
     else setMonthlyRecords(data);
   };
 
-  // --- NUEVA FUNCIÓN: Obtiene TODOS los registros de una asignatura para el resumen ---
   const fetchTotalSummary = async (subjectId) => {
     const { data, error } = await supabase
       .from('attendance_records')
@@ -113,6 +106,7 @@ function AttendanceCalendar() {
     }
   };
 
+  // --- FUNCIÓN CORREGIDA PARA RESPUESTA INSTANTÁNEA ---
   const handleDayClick = async (date) => {
     if (!selectedSubject) return;
 
@@ -125,18 +119,18 @@ function AttendanceCalendar() {
       newStatus = existingRecord.status === 'presente' ? 'ausente' : null;
     }
     
-    // Actualización optimista (instantánea)
-    let updatedRecords = [...monthlyRecords];
+    // 1. Actualización Optimista: Cambia el estado local al instante.
+    let updatedRecords;
     if (newStatus === null) {
-      updatedRecords = updatedRecords.filter(r => r.date !== dateString);
+      updatedRecords = monthlyRecords.filter(r => r.date !== dateString);
     } else if (existingRecord) {
-      updatedRecords = updatedRecords.map(r => r.date === dateString ? { ...r, status: newStatus } : r);
+      updatedRecords = monthlyRecords.map(r => r.date === dateString ? { ...r, status: newStatus } : r);
     } else {
-      updatedRecords.push({ date: dateString, status: newStatus });
+      updatedRecords = [...monthlyRecords, { date: dateString, status: newStatus }];
     }
-    setMonthlyRecords(updatedRecords);
+    setMonthlyRecords(updatedRecords); // ¡Esto hace el cambio visual instantáneo!
 
-    // Sincronización con la base de datos y actualización del resumen total
+    // 2. Sincronización con la Base de Datos en segundo plano.
     try {
       if (newStatus === null) {
         await supabase.from('attendance_records').delete().match({ subject_id: selectedSubject.id, date: dateString });
@@ -145,12 +139,13 @@ function AttendanceCalendar() {
           subject_id: selectedSubject.id, user_id: user.id, date: dateString, status: newStatus
         }, { onConflict: 'subject_id, date' });
       }
-      // Volvemos a calcular el resumen total DESPUÉS de confirmar el cambio
+      // Volvemos a calcular el resumen total DESPUÉS de confirmar el cambio.
       fetchTotalSummary(selectedSubject.id);
     } catch (error) {
+      // 3. Reversión: Si falla, volvemos al estado anterior para mantener la consistencia.
       console.error("Error al guardar en la base de datos:", error);
       alert("No se pudo guardar el cambio. Revisa tu conexión.");
-      setMonthlyRecords(monthlyRecords); // Revierte el cambio visual si falla
+      setMonthlyRecords(monthlyRecords); // Revierte el cambio visual.
     }
   };
 
@@ -192,7 +187,6 @@ function AttendanceCalendar() {
           />
           <div className="attendance-summary">
             <h4>Resumen Total de {selectedSubject.name}</h4>
-            {/* --- MODIFICACIÓN: Usar el nuevo estado totalSummary --- */}
             <p><span className="presente-dot"></span> Asistencias: {totalSummary.presente}</p>
             <p><span className="ausente-dot"></span> Ausencias: {totalSummary.ausente}</p>
           </div>
