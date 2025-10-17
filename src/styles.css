@@ -123,13 +123,7 @@ input:-webkit-autofill:active {
 .ausente-dot { background-color: #dc3545; }
 
 /* Estilos para Instrucciones */
-.instructions {
-  font-size: 0.9em;
-  color: #a9a9b3;
-  max-width: 80%;
-  margin: -10px auto 20px auto;
-  line-height: 1.4;
-}
+.instructions { font-size: 0.9em; color: #a9a9b3; max-width: 80%; margin: -10px auto 20px auto; line-height: 1.4; }
 
 /* Estilos para Formularios de Login y Registro */
 .auth-container { border: 1px solid #444; border-radius: 12px; padding: 2rem 3rem; width: 100%; max-width: 400px; background-color: #2D2D2D; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
@@ -141,6 +135,10 @@ input:-webkit-autofill:active {
 .auth-link a { color: #64b5f6; font-weight: bold; text-decoration: none; }
 .auth-link a:hover { text-decoration: underline; }
 
+/* Estilos para Estados de Resultado */
+.status-aprobado { color: #28a745; font-weight: bold; }
+.status-reprobado { color: #dc3545; font-weight: bold; }
+
 /* Arreglos para Móviles */
 @media (max-width: 600px) {
   #root { padding: 0.5rem; }
@@ -149,15 +147,4 @@ input:-webkit-autofill:active {
   .average-calculator-container .form-row input { width: 120px; }
   .react-calendar__tile { height: 40px; font-size: 0.8em; }
   .react-calendar__navigation button, .react-calendar__month-view__weekdays__weekday abbr { font-size: 0.9em; }
-}
-
-/* --- NUEVOS ESTILOS PARA LOS ESTADOS DE RESULTADO --- */
-.status-aprobado {
-  color: #28a745;
-  font-weight: bold;
-}
-
-.status-reprobado {
-  color: #dc3545;
-  font-weight: bold;
 }

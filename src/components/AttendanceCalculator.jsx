@@ -18,15 +18,11 @@ function AttendanceCalculator() {
 
     const attendancePercentage = ((total - absent) / total) * 100;
     const roundedPercentage = Math.round(attendancePercentage * 10) / 10;
-    const meetsRequirement = roundedPercentage >= 85;
 
-    // --- MODIFICACIÓN: Crear JSX para el resultado con colores ---
+    // --- MODIFICACIÓN: Mostrar solo el porcentaje ---
     setResult(
       <>
-        Porcentaje de Asistencia: {roundedPercentage.toFixed(1)}% - Estado: 
-        <span className={meetsRequirement ? 'status-aprobado' : 'status-reprobado'}>
-          {meetsRequirement ? ' Cumple' : ' No Cumple'}
-        </span>
+        Porcentaje de Asistencia: <strong>{roundedPercentage.toFixed(1)}%</strong>
       </>
     );
   };
