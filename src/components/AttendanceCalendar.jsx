@@ -1,7 +1,7 @@
 // src/components/AttendanceCalendar.jsx
 import { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css'; // Estilos base del calendario
+import 'react-calendar/dist/Calendar.css';
 import { supabase } from '../supabaseClient';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 
@@ -10,21 +10,33 @@ function AttendanceCalendar() {
   const [newSubjectName, setNewSubjectName] = useState('');
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [attendanceRecords, setAttendanceRecords] = useState([]);
+  // Estado para los registros del mes visible en el calendario
+  const [monthlyRecords, setMonthlyRecords] = useState([]);
+  // --- NUEVO ESTADO: Para el resumen total de la asignatura ---
+  const [totalSummary, setTotalSummary] = useState({ presente: 0, ausente: 0 });
 
-  // Cargar las asignaturas del usuario al iniciar
   useEffect(() => {
     fetchSubjects();
   }, []);
 
-  // Cargar los registros de asistencia cuando cambia la asignatura o el mes
+  // Hook para cargar los registros del mes visible
   useEffect(() => {
     if (selectedSubject) {
-      fetchAttendanceRecords(selectedSubject.id, currentDate);
+      fetchMonthlyRecords(selectedSubject.id, currentDate);
     } else {
-      setAttendanceRecords([]);
+      setMonthlyRecords([]);
     }
   }, [selectedSubject, currentDate]);
+
+  // --- NUEVO HOOK: Carga el resumen total solo cuando cambia la asignatura ---
+  useEffect(() => {
+    if (selectedSubject) {
+      fetchTotalSummary(selectedSubject.id);
+    } else {
+      // Resetea el resumen si no hay asignatura seleccionada
+      setTotalSummary({ presente: 0, ausente: 0 });
+    }
+  }, [selectedSubject]);
 
   const fetchSubjects = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -35,7 +47,8 @@ function AttendanceCalendar() {
     }
   };
 
-  const fetchAttendanceRecords = async (subjectId, date) => {
+  // Esta función ahora solo alimenta el calendario visual
+  const fetchMonthlyRecords = async (subjectId, date) => {
     const start = format(startOfMonth(date), 'yyyy-MM-dd');
     const end = format(endOfMonth(date), 'yyyy-MM-dd');
     
@@ -46,8 +59,27 @@ function AttendanceCalendar() {
       .gte('date', start)
       .lte('date', end);
     
-    if (error) console.error('Error cargando registros:', error);
-    else setAttendanceRecords(data);
+    if (error) console.error('Error cargando registros del mes:', error);
+    else setMonthlyRecords(data);
+  };
+
+  // --- NUEVA FUNCIÓN: Obtiene TODOS los registros de una asignatura para el resumen ---
+  const fetchTotalSummary = async (subjectId) => {
+    const { data, error } = await supabase
+      .from('attendance_records')
+      .select('status')
+      .eq('subject_id', subjectId);
+
+    if (error) {
+      console.error('Error cargando el resumen total:', error);
+    } else {
+      const summary = data.reduce((acc, record) => {
+        if (record.status === 'presente') acc.presente++;
+        if (record.status === 'ausente') acc.ausente++;
+        return acc;
+      }, { presente: 0, ausente: 0 });
+      setTotalSummary(summary);
+    }
   };
 
   const handleAddSubject = async (e) => {
@@ -85,48 +117,54 @@ function AttendanceCalendar() {
     if (!selectedSubject) return;
 
     const dateString = format(date, 'yyyy-MM-dd');
-    const existingRecord = attendanceRecords.find(r => r.date === dateString);
+    const existingRecord = monthlyRecords.find(r => r.date === dateString);
     const { data: { user } } = await supabase.auth.getUser();
 
     let newStatus = 'presente';
     if (existingRecord) {
       newStatus = existingRecord.status === 'presente' ? 'ausente' : null;
     }
-
+    
+    // Actualización optimista (instantánea)
+    let updatedRecords = [...monthlyRecords];
     if (newStatus === null) {
-      // Borrar el registro existente
-      await supabase.from('attendance_records').delete().match({ subject_id: selectedSubject.id, date: dateString });
+      updatedRecords = updatedRecords.filter(r => r.date !== dateString);
+    } else if (existingRecord) {
+      updatedRecords = updatedRecords.map(r => r.date === dateString ? { ...r, status: newStatus } : r);
     } else {
-      // Crear o actualizar el registro
-      await supabase.from('attendance_records').upsert({
-        subject_id: selectedSubject.id,
-        user_id: user.id,
-        date: dateString,
-        status: newStatus
-      }, { onConflict: 'subject_id, date' });
+      updatedRecords.push({ date: dateString, status: newStatus });
     }
-    fetchAttendanceRecords(selectedSubject.id, currentDate);
+    setMonthlyRecords(updatedRecords);
+
+    // Sincronización con la base de datos y actualización del resumen total
+    try {
+      if (newStatus === null) {
+        await supabase.from('attendance_records').delete().match({ subject_id: selectedSubject.id, date: dateString });
+      } else {
+        await supabase.from('attendance_records').upsert({
+          subject_id: selectedSubject.id, user_id: user.id, date: dateString, status: newStatus
+        }, { onConflict: 'subject_id, date' });
+      }
+      // Volvemos a calcular el resumen total DESPUÉS de confirmar el cambio
+      fetchTotalSummary(selectedSubject.id);
+    } catch (error) {
+      console.error("Error al guardar en la base de datos:", error);
+      alert("No se pudo guardar el cambio. Revisa tu conexión.");
+      setMonthlyRecords(monthlyRecords); // Revierte el cambio visual si falla
+    }
   };
 
-  // Función para dar estilo a los días del calendario
   const tileClassName = ({ date, view }) => {
     if (view === 'month') {
       const dateString = format(date, 'yyyy-MM-dd');
-      const record = attendanceRecords.find(r => r.date === dateString);
-      if (record) return record.status; // Devuelve 'presente' o 'ausente' como clase CSS
+      const record = monthlyRecords.find(r => r.date === dateString);
+      if (record) return record.status;
     }
   };
 
-  // Función para cambiar el mes/año visible
   const handleActiveStartDateChange = ({ activeStartDate }) => {
     setCurrentDate(activeStartDate);
   };
-
-  const summary = attendanceRecords.reduce((acc, record) => {
-    if(record.status === 'presente') acc.presente++;
-    if(record.status === 'ausente') acc.ausente++;
-    return acc;
-  }, { presente: 0, ausente: 0 });
 
   return (
     <div className="calculator-container attendance-container">
@@ -134,12 +172,7 @@ function AttendanceCalendar() {
 
       <div className="subject-controls">
         <form onSubmit={handleAddSubject}>
-          <input
-            type="text"
-            value={newSubjectName}
-            onChange={(e) => setNewSubjectName(e.target.value)}
-            placeholder="Nueva asignatura"
-          />
+          <input type="text" value={newSubjectName} onChange={(e) => setNewSubjectName(e.target.value)} placeholder="Nueva asignatura"/>
           <button type="submit">Crear</button>
         </form>
         <select onChange={(e) => setSelectedSubject(subjects.find(s => s.id == e.target.value))} value={selectedSubject?.id || ''}>
@@ -158,9 +191,10 @@ function AttendanceCalendar() {
             onActiveStartDateChange={handleActiveStartDateChange}
           />
           <div className="attendance-summary">
-            <h4>Resumen de {selectedSubject.name}</h4>
-            <p><span className="presente-dot"></span> Asistencias: {summary.presente}</p>
-            <p><span className="ausente-dot"></span> Ausencias: {summary.ausente}</p>
+            <h4>Resumen Total de {selectedSubject.name}</h4>
+            {/* --- MODIFICACIÓN: Usar el nuevo estado totalSummary --- */}
+            <p><span className="presente-dot"></span> Asistencias: {totalSummary.presente}</p>
+            <p><span className="ausente-dot"></span> Ausencias: {totalSummary.ausente}</p>
           </div>
         </div>
       )}
