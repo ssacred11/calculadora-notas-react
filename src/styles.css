@@ -55,11 +55,11 @@ button:hover {
   margin-bottom: 10px;
 }
 
-/* --- MODIFICACIÓN 1: Igualar el tamaño de los inputs --- */
+/* --- MODIFICACIÓN: Aumentar el tamaño de los inputs --- */
 .calculator-container .form-row input {
-    width: 120px; /* Asignar un ancho fijo */
-    text-align: center; /* Centrar el texto para mejor apariencia */
-    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+    width: 160px; /* Aumentado de 120px a 160px para más espacio */
+    text-align: center; 
+    box-sizing: border-box;
 }
 
 .dashboard-container header {
@@ -79,11 +79,10 @@ button:hover {
   padding-right: 25px;
 }
 
-/* --- MODIFICACIÓN 2: Oscurecer el símbolo '%' --- */
 .input-with-symbol span {
   position: absolute;
   right: 15px;
-  color: #666; /* Cambiado a un gris más oscuro y sutil */
+  color: #666;
   pointer-events: none;
 }
 
