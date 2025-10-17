@@ -1,7 +1,7 @@
 // src/pages/RegisterPage.jsx
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Importa Link
 
 function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -12,7 +12,6 @@ function RegisterPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // --- Validaciones ---
     if (password !== confirmPassword) {
       alert('Las contraseñas no coinciden.');
       return;
@@ -29,7 +28,7 @@ function RegisterPage() {
       });
 
       if (error) throw error;
-
+      
       alert('Registro exitoso. Revisa tu correo para confirmar la cuenta.');
       navigate('/login');
 
@@ -39,37 +38,48 @@ function RegisterPage() {
   };
 
   return (
-    <div>
+    // --- CLASE AÑADIDA ---
+    <div className="auth-container">
       <h2>Crear una Cuenta</h2>
-      <form onSubmit={handleRegister}>
-        <label>Correo Electrónico:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <br />
-        <label>Contraseña:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br />
-        <label>Confirmar Contraseña:</label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <br />
+      <form onSubmit={handleRegister} className="auth-form">
+        {/* --- CLASE AÑADIDA --- */}
+        <div className="form-group">
+          <label htmlFor="email">Correo Electrónico:</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        {/* --- CLASE AÑADIDA --- */}
+        <div className="form-group">
+          <label htmlFor="password">Contraseña:</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        {/* --- CLASE AÑADIDA --- */}
+        <div className="form-group">
+          <label htmlFor="confirmPassword">Confirmar Contraseña:</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </div>
         <button type="submit">Registrarse</button>
       </form>
-      <p>
-        ¿Ya tienes una cuenta? <a href="/login">Ingresa aquí</a>
+      {/* --- CLASE AÑADIDA y cambio a Link --- */}
+      <p className="auth-link">
+        ¿Ya tienes una cuenta? <Link to="/login">Ingresa aquí</Link>
       </p>
     </div>
   );

@@ -1,7 +1,7 @@
 // src/pages/LoginPage.jsx
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Importa Link
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,7 +19,6 @@ function LoginPage() {
 
       if (error) throw error;
 
-      // Si el login es exitoso, redirige al dashboard
       navigate('/dashboard');
 
     } catch (error) {
@@ -28,29 +27,37 @@ function LoginPage() {
   };
 
   return (
-    <div>
+    // --- CLASE AÑADIDA ---
+    <div className="auth-container">
       <h2>Ingreso de Usuario</h2>
-      <form onSubmit={handleLogin}>
-        <label>Correo Electrónico:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <br />
-        <label>Contraseña:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br />
+      <form onSubmit={handleLogin} className="auth-form">
+        {/* --- CLASE AÑADIDA --- */}
+        <div className="form-group">
+          <label htmlFor="email">Correo Electrónico:</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        {/* --- CLASE AÑADIDA --- */}
+        <div className="form-group">
+          <label htmlFor="password">Contraseña:</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
         <button type="submit">Ingresar</button>
       </form>
-      <p>
-        ¿No tienes una cuenta? <a href="/register">Regístrate aquí</a>
+      {/* --- CLASE AÑADIDA y cambio a Link --- */}
+      <p className="auth-link">
+        ¿No tienes una cuenta? <Link to="/register">Regístrate aquí</Link>
       </p>
     </div>
   );
