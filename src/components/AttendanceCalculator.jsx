@@ -30,7 +30,7 @@ function AttendanceCalculator() {
   };
 
   return (
-    <div className="calculator-container">
+    <div className="calculator-container simple-attendance-container">
       <h3>Calculadora Rápida de Asistencia</h3>
       <form onSubmit={handleSubmit}>
         <div className="form-row">

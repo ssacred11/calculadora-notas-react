@@ -10,7 +10,6 @@ function AverageCalculator() {
   const [selectedCombinationId, setSelectedCombinationId] = useState('');
   const [neededGrade, setNeededGrade] = useState(null);
 
-  // --- NUEVA FUNCIÓN: Cargar las combinaciones guardadas al iniciar ---
   useEffect(() => {
     fetchSavedCombinations();
   }, []);
@@ -78,7 +77,7 @@ function AverageCalculator() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setNeededGrade(null); // Limpiar cálculo anterior
+    setNeededGrade(null);
     const { finalGrade, totalWeight, isValid } = calculateGrade();
 
     if (!isValid) {
@@ -94,7 +93,6 @@ function AverageCalculator() {
     const status = roundedGrade >= 4.0 ? 'Aprobado' : 'Reprobado';
     setResult(`Nota Final: ${roundedGrade.toFixed(1)} - Estado: ${status}`);
 
-    // --- NUEVO: Calcular nota necesaria si no se ha alcanzado el 100% ---
     if (totalWeight < 100) {
       const remainingWeight = 100 - totalWeight;
       const neededScore = (4.0 - finalGrade) / (remainingWeight / 100);
@@ -108,7 +106,6 @@ function AverageCalculator() {
     }
   };
 
-  // --- NUEVA FUNCIÓN: Guardar la combinación actual ---
   const handleSaveCombination = async () => {
     if (!combinationName) {
       alert('Por favor, dale un nombre a la combinación antes de guardarla.');
@@ -134,12 +131,11 @@ function AverageCalculator() {
       } else {
         alert('¡Combinación guardada con éxito!');
         setCombinationName('');
-        fetchSavedCombinations(); // Recargar la lista
+        fetchSavedCombinations();
       }
     }
   };
 
-  // --- NUEVA FUNCIÓN: Cargar una combinación guardada ---
   const handleLoadCombination = async (event) => {
     const idToLoad = event.target.value;
     setSelectedCombinationId(idToLoad);
@@ -155,15 +151,14 @@ function AverageCalculator() {
         alert('Error al cargar la combinación.');
       } else {
         setGrades(data.grades_data);
-        setResult(null); // Limpiar resultados anteriores
+        setResult(null);
         setNeededGrade(null);
       }
     } else {
-      handleClear(); // Si selecciona la opción por defecto, limpiar todo
+      handleClear();
     }
   };
 
-  // --- NUEVA FUNCIÓN: Borrar una combinación guardada ---
   const handleDeleteCombination = async () => {
     if (!selectedCombinationId) {
         alert('Por favor, selecciona una combinación para borrar.');
@@ -191,10 +186,9 @@ function AverageCalculator() {
   };
 
   return (
-    <div className="calculator-container">
+    <div className="calculator-container average-calculator-container">
       <h3>Calculadora de Promedio Ponderado</h3>
 
-      {/* --- NUEVA SECCIÓN: Cargar y Borrar --- */}
       <div className="saved-grades-controls">
         <select value={selectedCombinationId} onChange={handleLoadCombination}>
           <option value="">-- Cargar una combinación --</option>
@@ -225,7 +219,6 @@ function AverageCalculator() {
       {result && <h4>{result}</h4>}
       {neededGrade && <p className="needed-grade-text">{neededGrade}</p>}
 
-      {/* --- NUEVA SECCIÓN: Guardar --- */}
       <div className="save-combination">
         <input type="text" value={combinationName} onChange={(e) => setCombinationName(e.target.value)} placeholder="Nombre de la combinación" />
         <button onClick={handleSaveCombination}>Guardar</button>
