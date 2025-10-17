@@ -139,6 +139,28 @@ input:-webkit-autofill:active {
 .status-aprobado { color: #28a745; font-weight: bold; }
 .status-reprobado { color: #dc3545; font-weight: bold; }
 
+/* --- NUEVOS ESTILOS PARA LOS ENCABEZADOS DE LA CALCULADORA --- */
+.form-headers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.form-headers span {
+  width: 160px; /* Ancho del input */
+  margin: 0 5px; /* Margen del input */
+  box-sizing: border-box;
+  font-weight: bold;
+  color: #a9a9b3;
+  font-size: 0.9em;
+}
+.form-headers .placeholder {
+  width: 40px; /* Ancho aprox. del botón "-" */
+  margin: 0 5px;
+}
+
+
 /* Arreglos para Móviles */
 @media (max-width: 600px) {
   #root { padding: 0.5rem; }
@@ -147,20 +169,9 @@ input:-webkit-autofill:active {
   .average-calculator-container .form-row input { width: 120px; }
   .react-calendar__tile { height: 40px; font-size: 0.8em; }
   .react-calendar__navigation button, .react-calendar__month-view__weekdays__weekday abbr { font-size: 0.9em; }
-}
 
-/* --- NUEVOS ESTILOS PARA LOS ENCABEZADOS DE LA CALCULADORA --- */
-.form-headers {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto 5px auto;
-  max-width: 350px; /* Ajusta este valor para que coincida con el ancho de los inputs */
-}
-
-.form-headers span {
-  width: 170px; /* Ancho similar al de los inputs + sus márgenes */
-  font-weight: bold;
-  color: #a9a9b3;
-  font-size: 0.9em;
+  /* Ocultar los encabezados en móvil para no sobrecargar la vista */
+  .form-headers {
+    display: none;
+  }
 }

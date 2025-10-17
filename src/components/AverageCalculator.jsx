@@ -206,10 +206,11 @@ function AverageCalculator() {
 
       <form onSubmit={handleSubmit}>
         
-        {/* --- ENCABEZADOS AÑADIDOS --- */}
+        {/* --- ENCABEZADOS CORREGIDOS CON ESPACIADOR --- */}
         <div className="form-headers">
-          <span>Notas</span>
+          <span>Nota</span>
           <span>Ponderación</span>
+          <span className="placeholder"></span>
         </div>
         
         {grades.map((grade, index) => (
