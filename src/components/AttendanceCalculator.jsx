@@ -18,9 +18,17 @@ function AttendanceCalculator() {
 
     const attendancePercentage = ((total - absent) / total) * 100;
     const roundedPercentage = Math.round(attendancePercentage * 10) / 10;
-    const status = roundedPercentage >= 85 ? 'Cumple' : 'No Cumple';
+    const meetsRequirement = roundedPercentage >= 85;
 
-    setResult(`Porcentaje de Asistencia: ${roundedPercentage.toFixed(1)}% - Estado: ${status}`);
+    // --- MODIFICACIÓN: Crear JSX para el resultado con colores ---
+    setResult(
+      <>
+        Porcentaje de Asistencia: {roundedPercentage.toFixed(1)}% - Estado: 
+        <span className={meetsRequirement ? 'status-aprobado' : 'status-reprobado'}>
+          {meetsRequirement ? ' Cumple' : ' No Cumple'}
+        </span>
+      </>
+    );
   };
 
   const handleClear = () => {
@@ -31,7 +39,7 @@ function AttendanceCalculator() {
 
   return (
     <div className="calculator-container simple-attendance-container">
-      <h3>Calculadora de Asistencia</h3>
+      <h3>Calculadora Rápida de Asistencia</h3>
       <form onSubmit={handleSubmit}>
         <div className="form-row">
           <input type="number" min="0" placeholder="Total de clases" value={totalClasses} onChange={(e) => setTotalClasses(e.target.value)} required />

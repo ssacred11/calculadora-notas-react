@@ -55,8 +55,18 @@ function AverageCalculator() {
     }
 
     const roundedGrade = Math.round(finalGrade * 10) / 10;
-    const status = roundedGrade >= 4.0 ? 'Aprobado' : 'Reprobado';
-    setResult(`Nota Final: ${roundedGrade.toFixed(1)} - Estado: ${status}`);
+    const isApproved = roundedGrade >= 4.0;
+    
+    // --- MODIFICACIÓN: Crear JSX para el resultado con colores ---
+    setResult(
+      <>
+        Nota Final: {roundedGrade.toFixed(1)} - Estado: 
+        <span className={isApproved ? 'status-aprobado' : 'status-reprobado'}>
+          {isApproved ? ' Aprobado' : ' Reprobado'}
+        </span>
+      </>
+    );
+
     setNeededGrade(null);
 
     if (totalWeight < 100) {
