@@ -57,7 +57,6 @@ function AverageCalculator() {
     const roundedGrade = Math.round(finalGrade * 10) / 10;
     const isApproved = roundedGrade >= 4.0;
     
-    // --- MODIFICACIÓN: Crear JSX para el resultado con colores ---
     setResult(
       <>
         Nota Final: {roundedGrade.toFixed(1)} - Estado: 
@@ -206,11 +205,18 @@ function AverageCalculator() {
       </div>
 
       <form onSubmit={handleSubmit}>
+        
+        {/* --- ENCABEZADOS AÑADIDOS --- */}
+        <div className="form-headers">
+          <span>Notas</span>
+          <span>Ponderación</span>
+        </div>
+        
         {grades.map((grade, index) => (
           <div key={index} className="form-row">
-            <input type="text" name="note" placeholder={`Nota ${index + 1} (10-70)`} value={grade.note} onChange={(e) => handleInputChange(index, e)} maxLength="2" required />
+            <input type="text" name="note" placeholder={`(10-70)`} value={grade.note} onChange={(e) => handleInputChange(index, e)} maxLength="2" required />
             <div className="input-with-symbol">
-              <input type="text" name="weight" placeholder={`Ponderación`} value={grade.weight} onChange={(e) => handleInputChange(index, e)} maxLength="3" required />
+              <input type="text" name="weight" placeholder={`(%)`} value={grade.weight} onChange={(e) => handleInputChange(index, e)} maxLength="3" required />
               <span>%</span>
             </div>
             {grades.length > 1 && <button type="button" onClick={() => handleRemoveFields(index)}>-</button>}
