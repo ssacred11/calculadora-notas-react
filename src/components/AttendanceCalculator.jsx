@@ -35,7 +35,7 @@ function AttendanceCalculator() {
 
   return (
     <div className="calculator-container simple-attendance-container">
-      <h3>Calculadora Rápida de Asistencia</h3>
+      <h3>Calculadora de Asistencia</h3>
       <form onSubmit={handleSubmit}>
         <div className="form-row">
           <input type="number" min="0" placeholder="Total de clases" value={totalClasses} onChange={(e) => setTotalClasses(e.target.value)} required />
