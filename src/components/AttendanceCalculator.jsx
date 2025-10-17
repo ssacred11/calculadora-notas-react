@@ -4,16 +4,29 @@ import { useState } from 'react';
 function AttendanceCalculator() {
   const [totalClasses, setTotalClasses] = useState('');
   const [absences, setAbsences] = useState('');
-  const [requiredPercentage, setRequiredPercentage] = useState(85);
+  const [requiredPercentage] = useState(85); // No permitimos que el usuario cambie esto directamente
   const [result, setResult] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const total = parseInt(totalClasses);
-    const absent = parseInt(absences);
+    const total = parseInt(totalClasses, 10);
+    const absent = parseInt(absences, 10);
 
-    if (isNaN(total) || isNaN(absent) || total <= 0 || absent < 0 || absent > total) {
-      alert('Por favor, ingresa números válidos. Las ausencias no pueden superar el total de clases.');
+    // Validaciones mejoradas
+    if (isNaN(total) || isNaN(absent) || totalClasses === '' || absences === '') {
+      alert('Todos los campos deben estar completos.');
+      return;
+    }
+    if (total <= 0) {
+      alert('El total de clases debe ser un número positivo.');
+      return;
+    }
+    if (absent < 0) {
+      alert('El número de ausencias no puede ser negativo.');
+      return;
+    }
+    if (absent > total) {
+      alert('El número de ausencias no puede ser mayor al total de clases.');
       return;
     }
 
@@ -36,14 +49,16 @@ function AttendanceCalculator() {
       <form onSubmit={handleSubmit}>
         <div className="form-row">
           <input
-            type="number"
+            type="number" // Mantener como number para el spinner, pero añadir min
+            min="0" // No permitir negativos
             placeholder="Total de clases"
             value={totalClasses}
             onChange={(e) => setTotalClasses(e.target.value)}
             required
           />
           <input
-            type="number"
+            type="number" // Mantener como number para el spinner, pero añadir min
+            min="0" // No permitir negativos
             placeholder="Número de ausencias"
             value={absences}
             onChange={(e) => setAbsences(e.target.value)}
