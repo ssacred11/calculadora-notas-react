@@ -46,9 +46,9 @@ function AverageCalculator() {
     }
 
     if (!isValid) {
-      // No mostramos alerta al cargar para no ser molestos, pero sí al calcular manualmente
       return { finalGrade: 0, totalWeight: 0, isValid: false };
     }
+
     if (totalWeight > 100) {
       alert(`La suma de las ponderaciones no puede superar el 100%. Suma actual: ${totalWeight}%.`);
       return { finalGrade, totalWeight, isValid: false };
@@ -100,7 +100,6 @@ function AverageCalculator() {
     }
   };
 
-  // --- LÓGICA DE GUARDADO RESTAURADA ---
   const handleSaveCombination = async () => {
     if (!combinationName) {
       alert('Por favor, dale un nombre a la combinación antes de guardarla.');
@@ -153,7 +152,6 @@ function AverageCalculator() {
     }
   };
 
-  // --- LÓGICA DE BORRADO RESTAURADA ---
   const handleDeleteCombination = async () => {
     if (!selectedCombinationId) {
         alert('Por favor, selecciona una combinación para borrar.');
