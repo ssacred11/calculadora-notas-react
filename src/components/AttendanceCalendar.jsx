@@ -94,17 +94,19 @@ function AttendanceCalendar() {
     }
   };
 
-  // --- FUNCIÓN CORREGIDA ---
+  // --- FUNCIÓN DEFINITIVAMENTE CORREGIDA ---
   const handleDeleteSubject = async () => {
     if (!selectedSubject || !window.confirm(`¿Seguro que quieres borrar la asignatura "${selectedSubject.name}" y toda su asistencia?`)) return;
 
     const { error } = await supabase.from('subjects').delete().eq('id', selectedSubject.id);
+
     if (error) {
         alert('Error al borrar la asignatura: ' + error.message);
     } else {
         alert('Asignatura borrada con éxito.');
-        // Actualizamos la lista de asignaturas y reseteamos el estado
-        fetchSubjects();
+        // 1. Actualiza la lista de asignaturas en la pantalla instantáneamente
+        setSubjects(prevSubjects => prevSubjects.filter(s => s.id !== selectedSubject.id));
+        // 2. Limpia la selección para que desaparezca el calendario
         setSelectedSubject(null);
     }
   };
