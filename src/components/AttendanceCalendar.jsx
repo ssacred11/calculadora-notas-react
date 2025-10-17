@@ -106,20 +106,20 @@ function AttendanceCalendar() {
     }
   };
 
-  // --- FUNCIÓN CORREGIDA PARA RESPUESTA INSTANTÁNEA ---
-  const handleDayClick = async (date) => {
+  // --- FUNCIÓN DEFINITIVA PARA RESPUESTA 100% INSTANTÁNEA ---
+  const handleDayClick = (date) => {
     if (!selectedSubject) return;
 
     const dateString = format(date, 'yyyy-MM-dd');
     const existingRecord = monthlyRecords.find(r => r.date === dateString);
-    const { data: { user } } = await supabase.auth.getUser();
+    const previousRecords = monthlyRecords; // Guardamos el estado anterior para revertir si hay error
 
     let newStatus = 'presente';
     if (existingRecord) {
       newStatus = existingRecord.status === 'presente' ? 'ausente' : null;
     }
-    
-    // 1. Actualización Optimista: Cambia el estado local al instante.
+
+    // 1. Actualización Visual Síncrona (esto es lo que la hace instantánea)
     let updatedRecords;
     if (newStatus === null) {
       updatedRecords = monthlyRecords.filter(r => r.date !== dateString);
@@ -128,25 +128,35 @@ function AttendanceCalendar() {
     } else {
       updatedRecords = [...monthlyRecords, { date: dateString, status: newStatus }];
     }
-    setMonthlyRecords(updatedRecords); // ¡Esto hace el cambio visual instantáneo!
+    setMonthlyRecords(updatedRecords);
 
-    // 2. Sincronización con la Base de Datos en segundo plano.
-    try {
-      if (newStatus === null) {
-        await supabase.from('attendance_records').delete().match({ subject_id: selectedSubject.id, date: dateString });
-      } else {
-        await supabase.from('attendance_records').upsert({
-          subject_id: selectedSubject.id, user_id: user.id, date: dateString, status: newStatus
-        }, { onConflict: 'subject_id, date' });
+    // 2. Proceso de Guardado en Segundo Plano (no bloquea la interfaz)
+    const syncWithDatabase = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error("Usuario no autenticado.");
+
+        if (newStatus === null) {
+          await supabase.from('attendance_records').delete().match({ subject_id: selectedSubject.id, date: dateString });
+        } else {
+          await supabase.from('attendance_records').upsert({
+            subject_id: selectedSubject.id,
+            user_id: user.id,
+            date: dateString,
+            status: newStatus
+          }, { onConflict: 'subject_id, date' });
+        }
+        // Actualizamos el resumen total una vez confirmado el cambio
+        fetchTotalSummary(selectedSubject.id);
+      } catch (error) {
+        console.error("Error al guardar en la base de datos:", error);
+        alert("No se pudo guardar el cambio. Revisa tu conexión.");
+        // Si hay un error, revertimos al estado anterior
+        setMonthlyRecords(previousRecords);
       }
-      // Volvemos a calcular el resumen total DESPUÉS de confirmar el cambio.
-      fetchTotalSummary(selectedSubject.id);
-    } catch (error) {
-      // 3. Reversión: Si falla, volvemos al estado anterior para mantener la consistencia.
-      console.error("Error al guardar en la base de datos:", error);
-      alert("No se pudo guardar el cambio. Revisa tu conexión.");
-      setMonthlyRecords(monthlyRecords); // Revierte el cambio visual.
-    }
+    };
+
+    syncWithDatabase(); // Se ejecuta "a su ritmo" sin esperar a que termine
   };
 
   const tileClassName = ({ date, view }) => {
@@ -164,7 +174,6 @@ function AttendanceCalendar() {
   return (
     <div className="calculator-container attendance-container">
       <h3>Control de Asistencia por Asignatura</h3>
-
       <div className="subject-controls">
         <form onSubmit={handleAddSubject}>
           <input type="text" value={newSubjectName} onChange={(e) => setNewSubjectName(e.target.value)} placeholder="Nueva asignatura"/>
@@ -176,7 +185,6 @@ function AttendanceCalendar() {
         </select>
         {selectedSubject && <button onClick={handleDeleteSubject} className="delete-button">Borrar Asignatura</button>}
       </div>
-
       {selectedSubject && (
         <div className="calendar-wrapper">
           <Calendar
