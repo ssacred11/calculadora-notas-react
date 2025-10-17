@@ -55,9 +55,8 @@ button:hover {
   margin-bottom: 10px;
 }
 
-/* --- MODIFICACIÓN: Aumentar el tamaño de los inputs --- */
 .calculator-container .form-row input {
-    width: 160px; /* Aumentado de 120px a 160px para más espacio */
+    width: 160px;
     text-align: center; 
     box-sizing: border-box;
 }
@@ -86,11 +85,21 @@ button:hover {
   pointer-events: none;
 }
 
-/* Bloque para arreglar autocompletado del navegador */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
     -webkit-text-fill-color: #E0E0E0 !important;
     box-shadow: 0 0 0 30px #333 inset !important;
+}
+
+/* --- NUEVO CÓDIGO PARA CENTRADO Y PADDING EN MÓVILES --- */
+@media (max-width: 600px) {
+  #root {
+    padding: 1rem; /* Reduce el padding en pantallas pequeñas */
+  }
+
+  .form-row {
+    flex-direction: column; /* Pone los inputs uno sobre otro */
+  }
 }
