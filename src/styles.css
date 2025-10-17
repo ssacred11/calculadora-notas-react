@@ -55,6 +55,13 @@ button:hover {
   margin-bottom: 10px;
 }
 
+/* --- MODIFICACIÓN 1: Igualar el tamaño de los inputs --- */
+.calculator-container .form-row input {
+    width: 120px; /* Asignar un ancho fijo */
+    text-align: center; /* Centrar el texto para mejor apariencia */
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+}
+
 .dashboard-container header {
     display: flex;
     justify-content: space-between;
@@ -62,7 +69,6 @@ button:hover {
     margin-bottom: 30px;
 }
 
-/* --- NUEVOS ESTILOS para el símbolo '%' --- */
 .input-with-symbol {
   position: relative;
   display: flex;
@@ -70,12 +76,22 @@ button:hover {
 }
 
 .input-with-symbol input {
-  padding-right: 25px; /* Añade espacio dentro del input para el símbolo */
+  padding-right: 25px;
 }
 
+/* --- MODIFICACIÓN 2: Oscurecer el símbolo '%' --- */
 .input-with-symbol span {
   position: absolute;
-  right: 15px; /* Posiciona el símbolo '%' a la derecha */
-  color: #aaa; /* Le da un color un poco más sutil */
-  pointer-events: none; /* Evita que se pueda hacer clic en el símbolo */
+  right: 15px;
+  color: #666; /* Cambiado a un gris más oscuro y sutil */
+  pointer-events: none;
+}
+
+/* Bloque para arreglar autocompletado del navegador */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: #E0E0E0 !important;
+    box-shadow: 0 0 0 30px #333 inset !important;
 }
