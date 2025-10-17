@@ -100,7 +100,7 @@ input:-webkit-autofill:active {
 }
 .delete-button { background-color: #a02c2c !important; }
 
-/* Diseño Aesthetic para Calendario */
+/* Estilos del Calendario */
 .attendance-container { display: flex; flex-direction: column; }
 .subject-controls { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #444; }
 .calendar-wrapper { margin-top: 15px; }
@@ -121,6 +121,63 @@ input:-webkit-autofill:active {
 .presente-dot, .ausente-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
 .presente-dot { background-color: #28a745; }
 .ausente-dot { background-color: #dc3545; }
+
+/* Estilos para Instrucciones */
+.instructions {
+  font-size: 0.9em;
+  color: #a9a9b3;
+  max-width: 80%;
+  margin: -10px auto 20px auto;
+  line-height: 1.4;
+}
+
+/* Estilos para Formularios de Login y Registro */
+.auth-container {
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 2rem 3rem;
+  width: 100%;
+  max-width: 400px;
+  background-color: #2D2D2D;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.auth-form .form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.auth-form .form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #a9a9b3;
+}
+
+.auth-form .form-group input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-form button {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.auth-link {
+  margin-top: 1.5rem;
+}
+
+.auth-link a {
+  color: #64b5f6;
+  font-weight: bold;
+  text-decoration: none;
+}
+.auth-link a:hover {
+  text-decoration: underline;
+}
 
 /* Arreglos para Móviles */
 @media (max-width: 600px) {
@@ -145,61 +202,4 @@ input:-webkit-autofill:active {
   .react-calendar__month-view__weekdays__weekday abbr {
     font-size: 0.9em;
   }
-}
-
-/* Estilos para Instrucciones */
-.instructions {
-  font-size: 0.9em;
-  color: #a9a9b3;
-  max-width: 80%;
-  margin: -10px auto 20px auto;
-  line-height: 1.4;
-}
-
-/* --- NUEVOS ESTILOS PARA FORMULARIOS DE LOGIN Y REGISTRO --- */
-.auth-container {
-  border: 1px solid #444;
-  border-radius: 12px;
-  padding: 2rem 3rem;
-  width: 100%;
-  max-width: 400px; /* Limita el ancho del formulario */
-  background-color: #2D2D2D;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.auth-form .form-group {
-  display: flex;
-  flex-direction: column; /* Pone la etiqueta encima del input */
-  align-items: flex-start; /* Alinea la etiqueta a la izquierda */
-  margin-bottom: 1.2rem;
-  text-align: left;
-}
-
-.auth-form .form-group label {
-  margin-bottom: 0.5rem; /* Espacio entre la etiqueta y el input */
-  font-weight: 500;
-  color: #a9a9b3;
-}
-
-.auth-form .form-group input {
-  width: 100%;
-  box-sizing: border-box; /* Asegura que el padding no afecte el ancho */
-}
-
-.auth-form button {
-  width: 100%;
-  margin-top: 1rem;
-}
-
-.auth-link {
-  margin-top: 1.5rem;
-}
-
-.auth-link a {
-  color: #64b5f6; /* Un color azul claro y visible */
-  font-weight: bold;
-  text-decoration: none;
-}
-.auth-link a:hover {
-  text-decoration: underline;
 }
