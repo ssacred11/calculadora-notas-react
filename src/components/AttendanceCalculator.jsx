@@ -1,52 +1,66 @@
-// src/components/AttendanceCalculator.jsx
-import { useState } from 'react';
+// src/components/AttendanceCalendar.jsx
+import { useState, useEffect } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+import { supabase } from '../supabaseClient';
+import { format } from 'date-fns';
+import { toast } from 'react-toastify';
+import Spinner from './Spinner';
 
-function AttendanceCalculator() {
-  const [totalClasses, setTotalClasses] = useState('');
-  const [absences, setAbsences] = useState('');
-  const [result, setResult] = useState(null);
+function AttendanceCalendar() {
+  const [subjects, setSubjects] = useState([]);
+  const [newSubjectName, setNewSubjectName] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  // ... otros estados ...
 
-  const handleSubmit = (e) => {
+  const fetchSubjects = async () => {
+    setIsLoading(true);
+    // ...
+    const { data, error } = await supabase.from('subjects').select('*').eq('user_id', user.id);
+    if (error) toast.error("Error al cargar asignaturas.");
+    else setSubjects(data);
+    setIsLoading(false);
+  };
+
+  const handleAddSubject = async (e) => {
     e.preventDefault();
-    const total = parseInt(totalClasses, 10);
-    const absent = parseInt(absences, 10);
-
-    if (isNaN(total) || isNaN(absent) || total <= 0 || absent < 0 || absent > total) {
-      alert('Por favor, ingresa números válidos.');
-      return;
+    if (!newSubjectName.trim()) return;
+    setIsLoading(true);
+    // ...
+    const { error } = await supabase.from('subjects').insert({ /* ... */ });
+    if (error) toast.error("Error al crear la asignatura.");
+    else {
+      setSubjects([...subjects, data]);
+      setNewSubjectName('');
+      toast.success("Asignatura creada.");
     }
-
-    const attendancePercentage = ((total - absent) / total) * 100;
-    const roundedPercentage = Math.round(attendancePercentage * 10) / 10;
-
-    // --- MODIFICACIÓN: Mostrar solo el porcentaje ---
-    setResult(
-      <>
-        Porcentaje de Asistencia: <strong>{roundedPercentage.toFixed(1)}%</strong>
-      </>
-    );
+    setIsLoading(false);
   };
-
-  const handleClear = () => {
-    setTotalClasses('');
-    setAbsences('');
-    setResult(null);
-  };
+  
+  // ... (aplica la misma lógica de setIsLoading y toast a las demás funciones) ...
 
   return (
-    <div className="calculator-container simple-attendance-container">
-      <h3>Calculadora de Asistencia</h3>
-      <form onSubmit={handleSubmit}>
-        <div className="form-row">
-          <input type="number" min="0" placeholder="Total de clases" value={totalClasses} onChange={(e) => setTotalClasses(e.target.value)} required />
-          <input type="number" min="0" placeholder="Número de ausencias" value={absences} onChange={(e) => setAbsences(e.target.value)} required />
-        </div>
-        <button type="submit">Calcular Asistencia</button>
-        <button type="button" onClick={handleClear} style={{ backgroundColor: '#dc3545' }}>Limpiar</button>
-      </form>
-      {result && <h4>{result}</h4>}
+    <div className="calculator-container attendance-container">
+      <h3>Control de Asistencia por Asignatura</h3>
+      <p className="instructions">
+        {/* ... */}
+      </p>
+      {isLoading ? <Spinner /> : (
+        <>
+          <div className="subject-controls">
+            {/* ... */}
+          </div>
+          {selectedSubject && (
+            <div className="calendar-wrapper">
+              {/* ... */}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
 
-export default AttendanceCalculator;
+// Pega el resto de tus funciones aquí, asegurándote de cambiar alert() por toast()
+export default AttendanceCalendar;
